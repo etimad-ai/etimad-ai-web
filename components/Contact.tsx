@@ -6,18 +6,42 @@ import { Reveal } from "./Reveal";
 import { ArrowIcon, MailIcon, PinIcon } from "./icons";
 import { company } from "@/lib/content";
 
+// Cloud Run notification endpoint (notifies the sales team).
+const NOTIFY_URL =
+  process.env.NEXT_PUBLIC_NOTIFY_URL ??
+  "https://etimad-notification-23987395973.asia-south1.run.app/";
+
+type Status = "idle" | "submitting" | "success" | "error";
+
 export function Contact() {
   const [form, setForm] = useState({
     name: "",
     company: "",
     message: "",
   });
+  const [status, setStatus] = useState<Status>("idle");
 
-  const mailto = `mailto:${company.email}?subject=${encodeURIComponent(
-    `Project enquiry — ${form.company || form.name || "Etimad AI Labs"}`
-  )}&body=${encodeURIComponent(
-    `Name: ${form.name}\nCompany: ${form.company}\n\n${form.message}`
-  )}`;
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (status === "submitting") return;
+    setStatus("submitting");
+    try {
+      const res = await fetch(NOTIFY_URL, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          name: form.name.trim(),
+          company: form.company.trim(),
+          message: form.message.trim(),
+        }),
+      });
+      if (!res.ok) throw new Error(`Request failed (${res.status})`);
+      setStatus("success");
+      setForm({ name: "", company: "", message: "" });
+    } catch {
+      setStatus("error");
+    }
+  }
 
   const field =
     "w-full rounded-xl border border-white/10 bg-ink-950/60 px-4 py-3 text-sm text-white placeholder:text-mist-500 outline-none transition-colors focus:border-brand-400/50 focus:ring-2 focus:ring-brand-400/15";
@@ -95,10 +119,7 @@ export function Contact() {
             <Reveal delay={0.15}>
               <form
                 className="rounded-2xl border border-white/10 bg-ink-950/40 p-6 backdrop-blur sm:p-7"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  window.location.href = mailto;
-                }}
+                onSubmit={handleSubmit}
               >
                 <div className="space-y-4">
                   <div>
@@ -147,15 +168,51 @@ export function Contact() {
 
                 <button
                   type="submit"
-                  className="group mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-6 py-3.5 text-sm font-semibold text-ink-950 transition-transform hover:scale-[1.02] active:scale-95"
+                  disabled={status === "submitting"}
+                  className="group mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-6 py-3.5 text-sm font-semibold text-ink-950 transition-transform hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
                 >
-                  Send enquiry
-                  <ArrowIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  {status === "submitting" ? (
+                    <>
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-ink-950/30 border-t-ink-950" />
+                      Sending…
+                    </>
+                  ) : (
+                    <>
+                      Send enquiry
+                      <ArrowIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                    </>
+                  )}
                 </button>
-                <p className="mt-3 text-center text-xs text-mist-500">
-                  Opens your mail client — or write us directly at{" "}
-                  {company.email}
-                </p>
+
+                <div
+                  className="mt-3 min-h-[1.25rem] text-center text-xs"
+                  aria-live="polite"
+                >
+                  {status === "success" && (
+                    <span className="text-brand-300">
+                      Thanks — your message is on its way. We&apos;ll be in touch
+                      shortly.
+                    </span>
+                  )}
+                  {status === "error" && (
+                    <span className="text-amber-300">
+                      Something went wrong. Please email us directly at{" "}
+                      <a
+                        href={`mailto:${company.email}`}
+                        className="underline underline-offset-2"
+                      >
+                        {company.email}
+                      </a>
+                      .
+                    </span>
+                  )}
+                  {(status === "idle" || status === "submitting") && (
+                    <span className="text-mist-500">
+                      We&apos;ll never share your details. Goes straight to our
+                      team.
+                    </span>
+                  )}
+                </div>
               </form>
             </Reveal>
           </div>

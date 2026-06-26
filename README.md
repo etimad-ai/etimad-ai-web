@@ -51,6 +51,9 @@ including the SEO/JSON-LD metadata.
 2. Add `etimad.ai` as a custom domain.
 3. Done — no environment variables required.
 
-The contact form opens the visitor's mail client (`contact@etimad.ai`). To
-capture submissions server-side instead, wire the form `onSubmit` in
-`components/Contact.tsx` to an API route or a form service (Formspree, Resend).
+The contact form POSTs `{ name, company, message }` to a Cloud Run
+notification function that alerts the sales team. The endpoint is set in
+`components/Contact.tsx` (`NOTIFY_URL`) and can be overridden at build time
+with the `NEXT_PUBLIC_NOTIFY_URL` environment variable. The function must send
+CORS headers (`Access-Control-Allow-Origin`) for the browser request to
+succeed.

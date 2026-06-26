@@ -1,9 +1,9 @@
 /** @type {import('next').NextConfig} */
 
 // Where the site is served from.
-//   • GitHub project page → "/etimad-ai-web"  (current setup)
-//   • Custom domain etimad.ai (served at root) → set to ""  and restore public/CNAME
-const BASE_PATH = "/etimad-ai-web";
+//   • Custom domain etimad.ai (served at root) → ""  (current setup, needs public/CNAME)
+//   • GitHub project page → "/etimad-ai-web"  and remove public/CNAME
+const BASE_PATH = "";
 
 const nextConfig = {
   reactStrictMode: true,

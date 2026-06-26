@@ -9,6 +9,7 @@ const geist = Geist({
 });
 
 const SITE = "https://etimad.ai";
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
@@ -48,7 +49,7 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: `${BASE_PATH}/favicon.svg`, type: "image/svg+xml" },
     ],
   },
 };

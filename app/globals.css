@@ -1,0 +1,203 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  --font-display: "Geist", ui-sans-serif, system-ui, sans-serif;
+
+  /* Ink / surface scale */
+  --color-ink-950: #060709;
+  --color-ink-900: #0a0c10;
+  --color-ink-850: #0e1117;
+  --color-ink-800: #12151d;
+  --color-ink-700: #1a1e28;
+  --color-ink-600: #262b38;
+
+  /* Brand — Etimad (trust): teal → emerald with cyan lift */
+  --color-brand-50: #ecfdf6;
+  --color-brand-200: #99f6e0;
+  --color-brand-300: #5eead4;
+  --color-brand-400: #2dd4bf;
+  --color-brand-500: #14b8a6;
+  --color-brand-600: #0d9488;
+
+  /* Accent — cool sky lift */
+  --color-accent-400: #38bdf8;
+  --color-accent-500: #0ea5e9;
+
+  /* Warm premium micro-accent */
+  --color-gold-300: #f4d8a8;
+  --color-gold-400: #e9c081;
+
+  --color-mist-200: #c6cedd;
+  --color-mist-400: #8a93a6;
+  --color-mist-500: #5f6878;
+}
+
+@layer base {
+  * {
+    border-color: color-mix(in oklab, white 8%, transparent);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-ink-950);
+    color: #e7ebf3;
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-brand-400) 35%, transparent);
+    color: #ffffff;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-ink-950);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-ink-600);
+    border-radius: 999px;
+    border: 2px solid var(--color-ink-950);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-ink-700);
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(
+      100deg,
+      var(--color-brand-300),
+      var(--color-accent-400) 55%,
+      var(--color-brand-400)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  .text-gradient-soft {
+    background: linear-gradient(180deg, #ffffff, #aeb7c7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* Hairline gradient borders for cards */
+  .border-hair {
+    position: relative;
+    background:
+      linear-gradient(var(--color-ink-850), var(--color-ink-850)) padding-box,
+      linear-gradient(
+          135deg,
+          color-mix(in oklab, white 16%, transparent),
+          transparent 40%
+        )
+        border-box;
+    border: 1px solid transparent;
+  }
+
+  .glass {
+    background: color-mix(in oklab, var(--color-ink-900) 72%, transparent);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+  }
+
+  .grid-faint {
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in oklab, white 4%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklab, white 4%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 64px 64px;
+  }
+
+  .glow-brand {
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--color-brand-400) 30%, transparent),
+      0 12px 40px -12px color-mix(in oklab, var(--color-brand-500) 60%, transparent);
+  }
+
+  .animate-float {
+    animation: float 9s ease-in-out infinite;
+  }
+
+  .animate-aurora {
+    animation: aurora 18s ease-in-out infinite alternate;
+  }
+
+  .animate-marquee {
+    animation: marquee 38s linear infinite;
+  }
+
+  .animate-shimmer {
+    background-size: 200% 100%;
+    animation: shimmer 6s linear infinite;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-22px);
+  }
+}
+
+@keyframes aurora {
+  0% {
+    transform: translate3d(-4%, -2%, 0) scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate3d(5%, 3%, 0) scale(1.12);
+    opacity: 0.95;
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
